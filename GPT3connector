@@ -1,0 +1,78 @@
+from openai import OpenAI
+
+client = OpenAI(
+    # This is the default and can be omitted
+    api_key="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",
+)
+
+chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            "role": "system",
+            "content": '''
+You are a security analyst. You operate a system where you aggregate various security bulletins and news about vulnerabilities. This system is equipped with an API, which includes several fields ready to be populated. Given that you are working with non-structured text, you must manually parse the text, draw conclusions, and send this information to the system, placing each piece of information into its specific field. I will provide you with a non-structured bulletin, and you need to prepare a JSON output with the following fields:
+
+short_description: Provide a very short summary of what the vulnerability is about.
+date_creation: Provide the date in format '%Y-%m-%dT%H:%M:%S.000Z'  when this bulletin or vulnerability was identified. 
+criticality_level: Let's operate statuses: Critical, High, Medium, Low, Informational. If it is not direclty mentioned, wirte per your opinion.
+software_affected: Transform the following software version descriptions into a format like NAME 7.4.1, NAME 7.4.2. no ranges allowed. As a maximum you can use NAME < 7.4.1. 
+cve_defined: List all defined CVEs. Use an array or write "not mentioned" if none are specified.
+exploit: Note if an exploit exists. If not mentioned, write "not mentioned"; if yes, then write "yes"; if no, then "no".
+attack_vector: Mention if an attack vector is provided or write per your opinion, like more human understandable. 
+CVSS_score: Include if it exists; if not, write "not mentioned".
+CVSS_vector: Include if it exists; if not, write "not mentioned".
+current_vulnerability_status: if exists, if not - write "not mentioned"
+risk: Describe the impact.
+patch: Note if a patch exists. If not mentioned, write "not mentioned".
+take_actions: Describe the necessary actions to mitigate the risk. Only include recommendations provided by the bulletin. If no actions are suggested, advise waiting and monitoring the situation.
+conclusion: Provide your own conclusion about the severity of the vulnerability even if it is not provided directly. Make a good expert conclusion for me based on your expertise?
+
+            '''
+        },
+        {
+            "role": "user",
+            "content": '''
+            
+
+ Cybersecurity and Infrastructure Security Agency (CISA)
+
+You are subscribed to Cybersecurity Advisories for Cybersecurity and Infrastructure Security Agency. This information has recently been updated and is now available.
+
+JetBrains Releases Security Advisory for TeamCity On-Premises
+02/09/2024 12:25 PM EST
+
+JetBrains released a security advisory to address a vulnerability (CVE-2024-23917) in TeamCity On-Premises. A cyber threat actor could exploit this vulnerability to take control of an affected system.
+
+CISA encourages users and administrators to review the Critical Security Issue Affecting TeamCity On-Premises-CVE-2024-23917 and apply the necessary update or workarounds.
+
+This product is provided subject to this Notification and this Privacy & Use policy.
+
+Having trouble viewing this message? View it as a webpage. 
+
+You are subscribed to updates from the Cybersecurity and Infrastructure Security Agency (CISA)
+Manage Subscriptions  |  Privacy Policy  |  Help
+
+Connect with CISA:
+Facebook  |  Twitter  |  Instagram  |  LinkedIn  |   YouTube    
+            
+     Also we already got the info from the NVD and here the results you can use also: 
+CVE ID: CVE-2024-23917
+Source Identifier: cve@jetbrains.com
+Published Date: 2024-02-06T10:15:09.280
+Last Modified Date: 2024-02-09T01:05:22.180
+Vulnerability Status: Analyzed
+Description: In JetBrains TeamCity before 2023.11.3 authentication bypass leading to RCE was possible
+CVSS v3.1 Score: 9.8 (CRITICAL)
+CVSS v3.1 Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+CVSS v3.1 Score: 9.8 (CRITICAL)
+CVSS v3.1 Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+Weakness: CWE-306
+Weakness: CWE-288
+References: https://nvd.nist.gov/vuln/detail/CVE-2024-23917       
+            
+            ''',
+        }
+    ],
+    model="gpt-3.5-turbo",
+)
+print(chat_completion.choices[0].message.content)
