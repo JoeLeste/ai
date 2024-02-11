@@ -1,0 +1,82 @@
+import requests
+
+def get_cve_details(cve_id):
+    """
+    Fetches details for a specific CVE from the NVD.
+
+    :param cve_id: The CVE ID (e.g., 'CVE-2019-1010218')
+    :return: A dictionary containing the CVE details or an error message.
+    """
+    # Base URL for the NVD CVE API
+    base_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    # Parameters for the API request
+    params = {"cveId": cve_id}
+
+    try:
+        # Make the API request
+        response = requests.get(base_url, params=params)
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Return the JSON response
+            return response.json()
+        else:
+            # Return an error message if the request failed
+            return {"error": f"Failed to fetch CVE details. Status code: {response.status_code}"}
+    except Exception as e:
+        # Return an error message if an exception occurred
+        return {"error": f"An error occurred: {e}"}
+
+def print_cve_details(cve_response):
+    if not cve_response or "vulnerabilities" not in cve_response:
+        print("No CVE details found in the response.")
+        return
+
+    for vuln in cve_response["vulnerabilities"]:
+        cve = vuln.get("cve", {})
+        print(f"CVE ID: {cve.get('id', 'N/A')}")
+        print(f"Source Identifier: {cve.get('sourceIdentifier', 'N/A')}")
+        print(f"Published Date: {cve.get('published', 'N/A')}")
+        print(f"Last Modified Date: {cve.get('lastModified', 'N/A')}")
+        print(f"Vulnerability Status: {cve.get('vulnStatus', 'N/A')}")
+        print(f"CISA Required Action: {cve.get('cisaRequiredAction', 'N/A')}")  # New line added for CISA Required Action
+
+        descriptions = cve.get("descriptions", [])
+        for desc in descriptions:
+            if desc.get("lang") == "en":
+                print(f"Description: {desc.get('value', 'N/A')}")
+
+        metrics_v3 = cve.get("metrics", {}).get("cvssMetricV31", [])
+        for metric in metrics_v3:
+            cvss_data = metric.get("cvssData", {})
+            print(f"CVSS v3.1 Score: {cvss_data.get('baseScore', 'N/A')} ({cvss_data.get('baseSeverity', 'N/A')})")
+            print(f"CVSS v3.1 Vector: {cvss_data.get('vectorString', 'N/A')}")
+
+        metrics_v2 = cve.get("metrics", {}).get("cvssMetricV2", [])
+        for metric in metrics_v2:
+            cvss_data = metric.get("cvssData", {})
+            print(f"CVSS v2.0 Score: {cvss_data.get('baseScore', 'N/A')} ({cvss_data.get('baseSeverity', 'N/A')})")
+            print(f"CVSS v2.0 Vector: {cvss_data.get('vectorString', 'N/A')}")
+
+        weaknesses = cve.get("weaknesses", [])
+        for weakness in weaknesses:
+            print(f"Weakness: {weakness.get('description', [{'value': 'N/A'}])[0].get('value', 'N/A')}")
+
+        print("References:")
+        references = vuln.get("references", [])
+        for ref in references:
+            print(f"- {ref.get('url')} ({', '.join(ref.get('tags', []))})")
+        print("\n---\n")
+
+# Example usage with the provided JSON response
+response = {
+    # Your JSON response here
+}
+print_cve_details(response)
+
+# Example usage
+if __name__ == "__main__":
+    cve_id = "CVE-2024-0519"
+    cve_details = get_cve_details(cve_id)
+    print(cve_details)
+    print (''''--==--==--==--\n\n\n\'''')
+    parsed = print_cve_details(cve_details)
