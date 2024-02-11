@@ -1,0 +1,46 @@
+import re
+import requests
+
+# Step 1: Retrieve the CVE from the text using Python
+def extract_cve(text):
+    # Regular expression pattern to match CVE IDs
+    cve_pattern = r"CVE-\d{4}-\d{4,7}"
+    # Search for CVE pattern in the text
+    cve_match = re.search(cve_pattern, text)
+    if cve_match:
+        return cve_match.group()
+    else:
+        return None
+
+# Sample text containing the CVE 
+# BULLETIN SHALL BE PASTED HERE!!!! <<<<<<<<<<
+sample_text = 
+'''
+You are subscribed to Cybersecurity Advisories for Cybersecurity and Infrastructure Security Agency. This information has recently been updated, and is now available.
+CISA Adds Three Known Exploited Vulnerabilities to Catalog
+01/17/2024 12:00 PM EST
+CISA has added three new vulnerabilities to its Known Exploited Vulnerabilities Catalog, based on evidence of active exploitation.
+CVE-2023-6549 Citrix NetScaler ADC and NetScaler Gateway Buffer Overflow Vulnerability
+CVE-2023-6548 Citrix NetScaler ADC and NetScaler Gateway Code Injection Vulnerability
+CVE-2024-0519 Google Chromium V8 Out-of-Bounds Memory Access Vulnerability
+These types of vulnerabilities are frequent attack vectors for malicious cyber actors and pose significant risks to the federal enterprise. 
+Binding Operational Directive (BOD) 22-01: Reducing the Significant Risk of Known Exploited Vulnerabilities established the Known Exploited Vulnerabilities Catalog as a living list of known Common Vulnerabilities and Exposures (CVEs) that carry significant risk to the federal enterprise. BOD 22-01 requires Federal Civilian Executive Branch (FCEB) agencies to remediate identified vulnerabilities by the due date to protect FCEB networks against active threats. See the BOD 22-01 Fact Sheet for more information.
+Although BOD 22-01 only applies to FCEB agencies, CISA strongly urges all organizations to reduce their exposure to cyberattacks by prioritizing timely remediation of Catalog vulnerabilities as part of their vulnerability management practice. CISA will continue to add vulnerabilities to the catalog that meet the specified criteria.
+Please share your thoughts. We recently updated our anonymous Product Feedback Survey and we'd welcome your feedback.
+This product is provided subject to this Notification and this Privacy & Use policy.
+
+'''
+
+# BULLETIN SHALL BE PASTED HERE!!!! <<<<<<<<<<
+# Extract CVE from the sample text
+
+cve = extract_cve(sample_text)
+
+# Step 2: Print the CVE and store it in a variable
+if cve:
+    print("Extracted CVE:", cve)
+else:
+    print("No CVE found in the text.")
+
+# Store the CVE in a variable
+cve_variable = cve
